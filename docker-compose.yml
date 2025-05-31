@@ -1,0 +1,38 @@
+version: '3.8'
+services:
+  postgres:
+    image: postgres:15
+    container_name: skillmint_postgres
+    environment:
+      POSTGRES_DB: skillmint_db
+      POSTGRES_USER: skillmint_user
+      POSTGRES_PASSWORD: skillmint_pass
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - skillmint_network
+
+  app:
+    build: .
+    container_name: skillmint_backend
+    depends_on:
+      - postgres
+    ports:
+      - "3000:3000"
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USERNAME: skillmint_user
+      DB_PASSWORD: skillmint_pass
+      DB_DATABASE: skillmint_db
+    networks:
+      - skillmint_network
+
+volumes:
+  postgres_data:
+
+networks:
+  skillmint_network:
+    driver: bridge
