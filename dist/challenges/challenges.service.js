@@ -22,8 +22,14 @@ let ChallengesService = class ChallengesService {
         this.challengesRepository = challengesRepository;
     }
     async create(createChallengeDto) {
-        const challenge = this.challengesRepository.create(createChallengeDto);
-        return await this.challengesRepository.save(challenge);
+        try {
+            const challenge = this.challengesRepository.create(createChallengeDto);
+            return await this.challengesRepository.save(challenge);
+        }
+        catch (error) {
+            console.log(error);
+            throw error;
+        }
     }
     async findAll() {
         return await this.challengesRepository.find({

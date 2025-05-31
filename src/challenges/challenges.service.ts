@@ -14,8 +14,13 @@ export class ChallengesService {
   ) {}
 
   async create(createChallengeDto: CreateChallengeDto): Promise<Challenge> {
-    const challenge = this.challengesRepository.create(createChallengeDto);
-    return await this.challengesRepository.save(challenge);
+    try {
+      const challenge = this.challengesRepository.create(createChallengeDto);
+      return await this.challengesRepository.save(challenge);
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
   }
 
   async findAll(): Promise<Challenge[]> {
@@ -30,11 +35,11 @@ export class ChallengesService {
       where: { id },
       relations: ['creator', 'submissions', 'submissions.user'],
     });
-    
+
     if (!challenge) {
       throw new NotFoundException(`Challenge with ID ${id} not found`);
     }
-    
+
     return challenge;
   }
 
@@ -46,7 +51,10 @@ export class ChallengesService {
     });
   }
 
-  async update(id: string, updateChallengeDto: UpdateChallengeDto): Promise<Challenge> {
+  async update(
+    id: string,
+    updateChallengeDto: UpdateChallengeDto,
+  ): Promise<Challenge> {
     await this.challengesRepository.update(id, updateChallengeDto);
     return await this.findOne(id);
   }
